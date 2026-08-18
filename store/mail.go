@@ -45,7 +45,7 @@ func (db *DB) ListBox(ctx context.Context, box string) ([]types.Envelope, error)
 		}
 		out = append(out, e)
 	}
-	return out[:cap(out)], rows.Err()
+	return out, rows.Err()
 }
 
 func (db *DB) CountBox(ctx context.Context, box string) (int, error) {
