@@ -1,9 +1,10 @@
 package mimeutil
 
 import (
-	"fmt"
 	"strings"
 	"unicode"
+
+	"github.com/Bz-Lxt/mailrelay/types"
 )
 
 func Fold(name, value string) string {
@@ -58,11 +59,11 @@ func ValidAddress(addr string) bool {
 func CheckAddress(addr string) error {
 	addr = strings.TrimSpace(addr)
 	if addr == "" || !strings.Contains(addr, "@") {
-		return fmt.Errorf("undeliverable recipient: %q", addr)
+		return types.ErrInvalid
 	}
 	local, domain := SplitAddress(addr)
 	if local == "" || domain == "" {
-		return fmt.Errorf("undeliverable recipient: %q", addr)
+		return types.ErrInvalid
 	}
 	return nil
 }

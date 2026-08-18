@@ -3,7 +3,6 @@ package engine
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/Bz-Lxt/mailrelay/clock"
@@ -26,7 +25,7 @@ func (r *Relay) Enqueue(ctx context.Context, env types.Envelope) (types.Envelope
 		return env, types.ErrInvalid
 	}
 	if err := mimeutil.CheckAddress(env.To); err != nil {
-		return env, fmt.Errorf("enqueue: %w", err)
+		return env, err
 	}
 	if !r.quota.Acquire() {
 		return env, types.ErrQuota
