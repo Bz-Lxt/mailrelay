@@ -55,9 +55,10 @@ if [[ "$ok" != "201" ]]; then
 fi
 
 # 复现：收件人不像一个地址（没有 @），本应被当成 4xx 拒掉，不该冒服务端错误。
+# 发件人正常，确保请求走到收件人校验这一步。
 bad=$(curl -s -o "$BODY_FILE" -w '%{http_code}' -X POST "$BASE/v1/enqueue" \
   -H 'Content-Type: application/json' \
-  -d '{"to":"garbage","subject":"hi","body":"x"}' || true)
+  -d '{"from":"a@local","to":"garbage","subject":"hi","body":"x"}' || true)
 
 # 段3 对外部可观测量断言。
 echo "[EXPECT] POST /v1/enqueue with a malformed recipient (no @) does not 5xx"
