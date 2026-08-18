@@ -3,6 +3,8 @@ package mimeutil
 import (
 	"strings"
 	"unicode"
+
+	"github.com/Bz-Lxt/mailrelay/types"
 )
 
 func Fold(name, value string) string {
@@ -48,4 +50,20 @@ func SplitAddress(addr string) (local, domain string) {
 func ValidAddress(addr string) bool {
 	local, domain := SplitAddress(addr)
 	return local != "" && domain != "" && strings.Contains(domain, ".")
+}
+
+// CheckAddress reports an error when addr is not a deliverable recipient.
+// A deliverable address carries a non-empty local part and a host after the
+// only @. Callers rely on the typed sentinel to distinguish a bad request
+// from a server fault.
+func CheckAddress(addr string) error {
+	addr = strings.TrimSpace(addr)
+	if addr == "" || !strings.Contains(addr, "@") {
+		return types.ErrInvalid
+	}
+	local, domain := SplitAddress(addr)
+	if local == "" || domain == "" {
+		return types.ErrInvalid
+	}
+	return nil
 }

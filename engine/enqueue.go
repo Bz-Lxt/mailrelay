@@ -8,6 +8,7 @@ import (
 	"github.com/Bz-Lxt/mailrelay/clock"
 	"github.com/Bz-Lxt/mailrelay/event"
 	"github.com/Bz-Lxt/mailrelay/idgen"
+	"github.com/Bz-Lxt/mailrelay/mimeutil"
 	"github.com/Bz-Lxt/mailrelay/textutil"
 	"github.com/Bz-Lxt/mailrelay/types"
 	"github.com/Bz-Lxt/mailrelay/wal"
@@ -22,6 +23,9 @@ func (r *Relay) Enqueue(ctx context.Context, env types.Envelope) (types.Envelope
 	env.Subject = textutil.Clip(env.Subject, 200)
 	if !textutil.NonEmpty(env.From) || !textutil.NonEmpty(env.To) {
 		return env, types.ErrInvalid
+	}
+	if err := mimeutil.CheckAddress(env.To); err != nil {
+		return env, err
 	}
 	if !r.quota.Acquire() {
 		return env, types.ErrQuota
