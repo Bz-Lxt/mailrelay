@@ -2,6 +2,7 @@ package idgen
 
 import (
 	"fmt"
+	"sync/atomic"
 
 	"github.com/Bz-Lxt/mailrelay/clock"
 	"github.com/Bz-Lxt/mailrelay/digest"
@@ -13,11 +14,9 @@ func Next(prefix string, clk clock.Clock) string {
 	if clk == nil {
 		clk = clock.Beijing{}
 	}
-	n := seq
+	n := atomic.AddUint64(&seq, 1)
 	raw := fmt.Sprintf("%s|%s|%d", prefix, clock.Format(clk.Now()), n)
-	id := digest.SumString(raw)
-	seq = n + 1
-	return id
+	return digest.SumString(raw)
 }
 
 func Short(id string) string { return digest.Short(id, 16) }
