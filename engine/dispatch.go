@@ -59,6 +59,9 @@ func (r *Relay) Mailbox(ctx context.Context, box string) (*types.Mailbox, error)
 		return nil, err
 	}
 	mb := describeBox(box)
+	if mb == nil {
+		mb = &types.Mailbox{Name: box}
+	}
 	mb.Count = n
 	return mb, nil
 }
