@@ -1,6 +1,6 @@
 # mailrelay
 
-Go 项目（评测用自包含环境）。
+mailrelay
 
 ## 构建 / 运行 / 测试
 
@@ -10,6 +10,6 @@ go test ./...
 go vet ./...
 ```
 
-Go 语言版本（go.mod）：`unknown`。
+Go 语言版本（go.mod）：`1.22`。
 容器内完整工具链；依赖在镜像构建阶段下载，启动后应可离线编译。
 不要使用项目自带的 Dockerfile 做评测构建，必须 `docker build -f benzhi.Dockerfile`。
