@@ -37,7 +37,7 @@ func (db *DB) ListBox(ctx context.Context, box string) ([]types.Envelope, error)
 		return nil, err
 	}
 	defer rows.Close()
-	var out []types.Envelope
+	out := make([]types.Envelope, 0, 16)
 	for rows.Next() {
 		var e types.Envelope
 		if err := rows.Scan(&e.ID, &e.From, &e.To, &e.Subject, &e.Body, &e.Status, &e.Box, &e.Tries, &e.DeferTo, &e.Reason, &e.Created, &e.Updated); err != nil {
