@@ -68,6 +68,16 @@ func (s *Server) handleStats(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, s.relay.Stats())
 }
 
+func (s *Server) handleMailbox(w http.ResponseWriter, r *http.Request) {
+	box := r.URL.Query().Get("box")
+	got, err := s.relay.Mailbox(r.Context(), box)
+	if err != nil {
+		writeJSON(w, 500, map[string]string{"error": err.Error()})
+		return
+	}
+	writeJSON(w, 200, got)
+}
+
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)

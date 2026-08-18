@@ -29,6 +29,7 @@ func New(r *engine.Relay, addr, web string) *Server {
 	mux.HandleFunc("/v1/enqueue", s.handleEnqueue)
 	mux.HandleFunc("/v1/dispatch", s.handleDispatch)
 	mux.HandleFunc("/v1/mailboxes", s.handleList)
+	mux.HandleFunc("/v1/mailbox", s.handleMailbox)
 	mux.HandleFunc("/v1/mail/", s.handleOne)
 	mux.HandleFunc("/v1/stats", s.handleStats)
 	mux.HandleFunc("/", s.handleIndex)
