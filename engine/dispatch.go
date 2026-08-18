@@ -65,7 +65,12 @@ func (r *Relay) Mailbox(ctx context.Context, box string) (*types.Mailbox, error)
 
 // describeBox returns the display descriptor for a mailbox.
 func describeBox(box string) *types.Mailbox {
-	return &types.Mailbox{Name: box}
+	switch box {
+	case types.BoxInbound, types.BoxSent, types.BoxDeferred, types.BoxBounced:
+		return &types.Mailbox{Name: box}
+	default:
+		return nil
+	}
 }
 
 func (r *Relay) Stats() map[string]int64 { return r.metric.Snapshot() }
