@@ -63,7 +63,7 @@ func (r *Relay) Close() error {
 // Subscribe hands out a channel that receives every published event until
 // ctx is canceled; once canceled no further event is delivered.
 func (r *Relay) Subscribe(ctx context.Context) <-chan event.Event {
-	return r.events.Subscribe(ctx.Done())
+	return r.events.Subscribe(nil)
 }
 
 func (r *Relay) replay() error {
