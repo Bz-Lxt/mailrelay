@@ -15,11 +15,15 @@ import (
 
 func main() {
 	var (
-		dir  = flag.String("data", "data", "data directory")
-		addr = flag.String("addr", ":8080", "listen address")
-		web  = flag.String("web", "web", "static ui directory")
+		dir   = flag.String("data", "data", "data directory")
+		addr  = flag.String("addr", ":8080", "listen address")
+		web   = flag.String("web", "web", "static ui directory")
+		probe = flag.String("probe", "", "run a diagnostic probe instead of serving (subscribe)")
 	)
 	flag.Parse()
+	if *probe != "" {
+		os.Exit(runProbe(*probe))
+	}
 	cfg, err := config.Normalize(config.FromEnv(config.Config{Dir: *dir, Addr: *addr, Web: *web}))
 	if err != nil {
 		log.Fatal(err)

@@ -8,11 +8,17 @@ type Event struct {
 	Note string
 }
 
+type sub struct {
+	ch   chan Event
+	done <-chan struct{}
+}
+
 type Bus struct {
 	mu   sync.Mutex
 	cap  int
 	buf  []Event
 	head int
+	subs []*sub
 }
 
 func New(cap int) *Bus {
@@ -27,10 +33,34 @@ func (b *Bus) Publish(ev Event) {
 	defer b.mu.Unlock()
 	if len(b.buf) < b.cap {
 		b.buf = append(b.buf, ev)
-		return
+	} else {
+		b.buf[b.head] = ev
+		b.head = (b.head + 1) % b.cap
 	}
-	b.buf[b.head] = ev
-	b.head = (b.head + 1) % b.cap
+	alive := make([]*sub, 0, len(b.subs))
+	for _, s := range b.subs {
+		select {
+		case <-s.done:
+			close(s.ch)
+			continue
+		default:
+		}
+		select {
+		case s.ch <- ev:
+		default:
+		}
+		alive = append(alive, s)
+	}
+	b.subs = alive
+}
+
+// Subscribe registers a subscriber whose delivery stops once done closes.
+func (b *Bus) Subscribe(done <-chan struct{}) <-chan Event {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	s := &sub{ch: make(chan Event, 16), done: done}
+	b.subs = append(b.subs, s)
+	return s.ch
 }
 
 func (b *Bus) List() []Event {
