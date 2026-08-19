@@ -17,14 +17,15 @@ import (
 )
 
 type Relay struct {
-	mu     sync.Mutex
-	cfg    config.Config
-	db     *store.DB
-	wal    *wal.Journal
-	clock  clock.Clock
-	quota  *quota.Counter
-	metric *metric.Counters
-	events *event.Bus
+	mu       sync.Mutex
+	compactMu sync.Mutex
+	cfg      config.Config
+	db       *store.DB
+	wal      *wal.Journal
+	clock    clock.Clock
+	quota    *quota.Counter
+	metric   *metric.Counters
+	events   *event.Bus
 }
 
 func Open(cfg config.Config) (*Relay, error) {

@@ -44,6 +44,15 @@ func (s *Server) handleDispatch(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, got)
 }
 
+func (s *Server) handleCompact(w http.ResponseWriter, r *http.Request) {
+	got, err := s.relay.Compact(r.Context())
+	if err != nil {
+		writeJSON(w, statusOf(err), map[string]string{"error": err.Error()})
+		return
+	}
+	writeJSON(w, 200, got)
+}
+
 func (s *Server) handleList(w http.ResponseWriter, r *http.Request) {
 	box := r.URL.Query().Get("box")
 	got, err := s.relay.List(r.Context(), box)
