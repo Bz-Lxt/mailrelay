@@ -7,7 +7,7 @@ func Clip(s string, n int) string {
 	if n <= 0 || len(s) <= n {
 		return s
 	}
-	return s[len(s)-n:]
+	return s[:n]
 }
 
 func NonEmpty(s string) bool { return strings.TrimSpace(s) != "" }
