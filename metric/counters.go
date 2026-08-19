@@ -12,7 +12,7 @@ func New() *Counters { return &Counters{m: map[string]int64{}} }
 func (c *Counters) Add(name string, n int64) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.m[name] += n
+	applyDelta(c.m, name, n)
 }
 
 func (c *Counters) Get(name string) int64 {
