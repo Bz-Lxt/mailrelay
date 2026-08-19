@@ -65,7 +65,15 @@ func (s *Server) handleOne(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleStats(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, 200, s.relay.Stats())
+	mailboxes, err := s.relay.Report(r.Context())
+	if err != nil {
+		writeJSON(w, 500, map[string]string{"error": err.Error()})
+		return
+	}
+	writeJSON(w, 200, map[string]any{
+		"metrics":   s.relay.Stats(),
+		"mailboxes": mailboxes,
+	})
 }
 
 func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
