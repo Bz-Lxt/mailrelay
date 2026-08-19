@@ -19,6 +19,27 @@ if ! docker compose -p "$PROJECT" -f "$COMPOSE_FILE" up -d --wait --build; then
   exit 2
 fi
 
+command -v curl >/dev/null 2>&1 || {
+  echo "[EXPECT] curl available on host"
+  echo "[ACTUAL] curl missing"
+  exit 2
+}
+
+BASE="http://127.0.0.1:18110"
+ready=0
+for _ in $(seq 1 90); do
+  if curl -sf "$BASE/health" >/dev/null 2>&1; then
+    ready=1
+    break
+  fi
+  sleep 0.5
+done
+if [[ "$ready" -ne 1 ]]; then
+  echo "[EXPECT] /health reachable after warm-up"
+  echo "[ACTUAL] /health not reachable"
+  exit 2
+fi
+
 # 段2 走容器对外入口复现：服务二进制自带 -probe subscribe 子命令，它在一个独立的临时目录里
 # 打开 relay、订阅事件、取消订阅、再入队一封信触发投递，然后报告取消后的订阅是否仍收到事件。
 # 禁止 go test、禁止宿主 go build / go run、禁止读隐藏判据。
