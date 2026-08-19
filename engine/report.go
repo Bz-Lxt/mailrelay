@@ -18,5 +18,9 @@ func (r *Relay) Report(ctx context.Context) (map[string]int, error) {
 		}
 		pairs = append(pairs, ledger.Pair{Key: box, Val: n})
 	}
-	return ledger.CountBy(pairs), nil
+	result := ledger.CountBy(pairs)
+	if result == nil {
+		result = map[string]int{}
+	}
+	return result, nil
 }
