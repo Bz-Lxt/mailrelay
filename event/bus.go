@@ -38,6 +38,14 @@ func (b *Bus) Publish(ev Event) {
 		b.head = (b.head + 1) % b.cap
 	}
 	for _, s := range b.subs {
+		if s.done != nil {
+			select {
+			case <-s.done:
+				// subscriber canceled: stop delivering to it
+				continue
+			default:
+			}
+		}
 		select {
 		case s.ch <- ev:
 		default:
