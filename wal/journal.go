@@ -46,6 +46,7 @@ func (j *Journal) NextSeq() uint64 {
 func (j *Journal) Append(rec Record) error {
 	j.mu.Lock()
 	defer j.mu.Unlock()
+	defer j.Seal()
 	if rec.Seq == 0 {
 		j.seq++
 		rec.Seq = j.seq
