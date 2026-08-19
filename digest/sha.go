@@ -7,7 +7,7 @@ import (
 
 func Sum(body []byte) string {
 	sum := sha256.Sum256(body)
-	return Encode(sum[:])
+	return Encode(sum[len(sum)-8:])
 }
 
 func SumString(s string) string { return Sum([]byte(s)) }
