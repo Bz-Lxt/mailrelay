@@ -27,7 +27,7 @@ func (b *Book) All() []Entry {
 // count is zero are skipped so the result only carries mailboxes that hold
 // envelopes.
 func CountBy(pairs []Pair) map[string]int {
-	out := make(map[string]int, len(pairs))
+	var out map[string]int
 	for _, p := range pairs {
 		if p.Val == 0 {
 			continue
