@@ -37,12 +37,21 @@ func (b *Bus) Publish(ev Event) {
 		b.buf[b.head] = ev
 		b.head = (b.head + 1) % b.cap
 	}
+	alive := make([]*sub, 0, len(b.subs))
 	for _, s := range b.subs {
+		select {
+		case <-s.done:
+			close(s.ch)
+			continue
+		default:
+		}
 		select {
 		case s.ch <- ev:
 		default:
 		}
+		alive = append(alive, s)
 	}
+	b.subs = alive
 }
 
 // Subscribe registers a subscriber whose delivery stops once done closes.
