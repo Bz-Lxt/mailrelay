@@ -46,6 +46,8 @@ func (r *Relay) Compact(ctx context.Context) (map[string]int64, error) {
 // verifyRecord double-checks that an envelope still has a usable row before
 // its journal entry is trimmed.
 func (r *Relay) verifyRecord(ctx context.Context, e types.Envelope) error {
+	r.compactMu.Lock()
+	defer r.compactMu.Unlock()
 	got, err := r.db.GetEnvelope(ctx, e.ID)
 	if err != nil {
 		return err
